@@ -1,4 +1,10 @@
 # Gaming Fans Nadir
+## Implementation
+```words.txt``` provided by [this](https://github.com/dwyl/english-words) git repository, given its use of [unlicense](https://unlicense.org/).
+```AnaObj.java``` support class by Isaac that makes a HashMap of all characters in the anagram in the line.
+In terms of memory use, this program isn't too bad, each line stored as an object will take about 3kb, a single instance of the dictionary will take up around 19.25mb of memory when stored in an arraylist.
+
+## Introduction
 Two strings are [anagrams](https://en.wikipedia.org/wiki/Anagram) of one another if, ignoring capitalisation, punctuation and
 whitespace they contain the same characters. For instance Finding Anagrams and
 Gaming fan’s nadir are anagrams. Utilities such as [I rearrangement servant](https://wordsmith.org/anagram/) can
