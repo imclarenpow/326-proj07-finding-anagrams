@@ -39,7 +39,9 @@
 >> adds lines to arraylist
 >> hands that arraylist to ```inputHandler()```
 >> ```inputHandler()``` returns array of strings with all the non-letters removed
+>>
 >>> *note to self - check how this works with macrons and other flairs to letters*
+>>
 >> splits the arraylist of strings around the empty line
 >> adds Strings before empty line to words ArrayList
 >> adds String after empty line to dictionary ArrayList
@@ -51,7 +53,9 @@
 > in for loop:
 >> calls ```lineHandler()``` and adds the output to temp variable
 >> checks if line is empty, if so removes and goes back 1 index
+>>
 >>> *note to self - this might not be necessary*
+>>
 >> if temp isn't empty, it adds it to the output arraylist
 > returns the output arraylist as a regular array.
 #### lineHandler()
