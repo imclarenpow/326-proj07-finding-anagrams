@@ -9,6 +9,7 @@ public class AnaObj {
     private static HashMap<Character, Integer> letters = new HashMap<>();
     // keeping track of the characters left
     private int amtChars = 0;
+    private String word;
     /**
      * constructor for object, inits a new hashmap and adds all characters from the inputted string
      * @param input -> line that we will make anagrams out of
@@ -16,6 +17,7 @@ public class AnaObj {
     public AnaObj(String input){
         initMap();
         storeChars(input);
+        word = input;
     }
     /** initialises a HashMap with keys of every lowercase letter.
     */
@@ -51,9 +53,18 @@ public class AnaObj {
         letters.put(c, temp-1);
         amtChars--;
     }
+    public void take(char c, int amt){
+        int temp = letters.get(c);
+        letters.put(c, temp-amt);
+        amtChars = amtChars-amt;
+    }
     /** method to return the total number of chars left
      */
     public int charsLeft(){
         return amtChars;
+    }
+    /** method that returns the word */
+    public String getWord(){
+        return word;
     }
 }

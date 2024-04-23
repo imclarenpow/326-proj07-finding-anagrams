@@ -1,30 +1,26 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.util.*;
 /** class for the dictionary that adds the info from the dictionary txt files
  * @author Isaac
  */
 public class Dictionary {
-    // file paths - change if you move the text files or change their names
-    private String indecesFP = "Dictionary/dictionaryIndeces.txt";
-    private String wordsFP = "Dictionary/wordsByLeng.txt";
 
     private HashMap<Integer, Integer> indeces = new HashMap<>();
     private HashMap<Character, Integer> template = new HashMap<>();
     private ArrayList<String> words = new ArrayList<>();
     /** constructor to construct all the datafields we want! */
-    public Dictionary(){
-        try {
-            setIndeces();
-            setWords();
-        } catch (FileNotFoundException e) {
-            System.out.println("Couldn't find Indeces File");
-            e.printStackTrace();
-        }
+    public Dictionary(ArrayList<String> input){
+        orderByLength(input);
+        setIndeces(words);
         initTempHash();
-
+    }
+    
+    public void orderByLength(ArrayList<String> input){
+        // Sort lines by length
+        Collections.sort(input, Comparator.comparingInt(String::length).reversed());
+        // Print the sorted lines
+        for (String line : input) {
+            words.add(line);
+        }
     }
     /** initialises a template of the hashmap we will use for words */
     public void initTempHash(){
@@ -33,29 +29,22 @@ public class Dictionary {
         }
     }
     /** creates a HashMap of the indeces as to easily tell Anagram where to start looking for matches */
-    public void setIndeces() throws FileNotFoundException{
-        File file = new File(indecesFP);
-        Scanner sc = new Scanner(file);
-        while(sc.hasNextLine()){
-            String[] temp = sc.nextLine().split(" ");
-            int length = Integer.parseInt(temp[1]);
-            int index = Integer.parseInt(temp[0]);
-            indeces.put(index, length);
+    public void setIndeces(ArrayList<String> input){
+        int temp = 0;
+        for(int i=0; i<input.size(); i++){
+            if(input.get(i).length()!=temp){
+                temp = input.get(i).length();
+                indeces.put(temp, i);
+            }
         }
-        sc.close();
     }
     /** method that returns the index of the first line of the given length */
     public int getLengthStartingIndex(int size){
-        return indeces.get(size);
-    }
-    /** initialises the words in the dictionary */
-    public void setWords() throws FileNotFoundException{
-        File file = new File(wordsFP);
-        Scanner sc = new Scanner(file);
-        while(sc.hasNextLine()){
-            words.add(sc.nextLine());
+        // if the length is bigger than the biggest number just return 0 to start from the start.
+        if(indeces.get(size)==null){
+            return 0;
         }
-        sc.close();
+        return indeces.get(size);
     }
     /** @returns the word from the index specified */
     public String getWord(int i){

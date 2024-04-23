@@ -58,7 +58,7 @@ public class Utilities {
         for(int i=0; i<input.size(); i++){
             if(input.get(i).length()!=temp){
                 temp = input.get(i).length();
-                System.out.println(i + " " + temp);
+                System.out.println(temp + " " + i);
             }
         }
     }
