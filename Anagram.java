@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.HashMap;
 
 public class Anagram{
     
@@ -45,6 +46,42 @@ public class Anagram{
         dictionary.clear(); // clear dictionary ArrayList to save memory
         
         debugSupportClasses(d, ana);
+
+        for(int i = 0; i<ana.length; i++){
+            anagramHandler(d, ana[i]);
+            System.out.println();
+        }
+            
+    }
+    // TODO: this method doesn't work correctly, the rest of the code isn't too shabby though
+    // Supposed to find anagrams based on the dictionary and the anagram object
+    public static void anagramHandler(Dictionary d, AnaObj ana){
+        // allows method to see the map of Anagram object
+        HashMap<Character, Integer> temp = ana.getMap();
+        System.out.println("Anagram Method word: " + ana.getWord());
+        ArrayList<String> output = new ArrayList<>();
+        // get the starting index of the dictionary based on the length of the anagram (skips unneeded searching)
+        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
+        System.out.println("Starting Search from Index: " + startingIndeces);
+        // loop through the dictionary to find possible anagrams
+        for(int j = startingIndeces; j<d.dictionaryLength(); j++){
+            HashMap<Character, Integer> prospectiveWord = d.getChars(j);
+            // if this word is a prospective anagram, 
+            if(d.possibleAnagram(temp, j)){
+                System.out.println(d.getWord(j) + " - has been deemed possible");
+                for(char c : prospectiveWord.keySet()){
+                    ana.take(c, prospectiveWord.get(c));
+                }
+                output.add(d.getWord(j));
+                // sets j to look at the index of the next word of the same length
+                temp = ana.getMap();
+                j = d.getLengthStartingIndex(ana.charsLeft());
+            }
+            
+        }
+        for(String s : output){
+            System.out.print(s + " ");
+        }
     }
 
     /** Class to handle input of lines
@@ -55,8 +92,12 @@ public class Anagram{
 
         ArrayList<String> output = new ArrayList<>();
         for(int i = 0; i<input.size(); i++){
-            String temp = lineHandler(input.get(i));
-            output.add(temp);
+            // ignores lines that start with # (as this indicates a comment in test files)
+            if(input.get(i).startsWith("#")){
+            }else{
+                String temp = lineHandler(input.get(i));
+                output.add(temp);
+            }
         }
 
         return output.toArray(new String[output.size()]);
@@ -66,7 +107,6 @@ public class Anagram{
      * @return String output -> returns a string with only lowercase versions of the letters in the lines
      */
     public static String lineHandler(String input){
-
         StringBuilder output = new StringBuilder();
 
         for(int i=0; i<input.length(); i++){
@@ -90,5 +130,6 @@ public class Anagram{
         for(int i = 31; i>20; i--){
             System.out.println("Length " + i + " at Index " + d.getLengthStartingIndex(i));
         }
+        System.out.println("----");
     }
 }

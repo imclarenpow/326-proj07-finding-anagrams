@@ -41,8 +41,15 @@ public class Dictionary {
     /** method that returns the index of the first line of the given length */
     public int getLengthStartingIndex(int size){
         // if the length is bigger than the biggest number just return 0 to start from the start.
-        if(indeces.get(size)==null){
+        Iterator<HashMap.Entry<Integer, Integer>> it = indeces.entrySet().iterator();
+        HashMap.Entry<Integer, Integer> first = it.next();
+        do{
+            first = it.next();
+        }while((first.getKey()==null));
+        if(indeces.get(size)<first.getKey()){
             return 0;
+        }else if(indeces.get(size)==null){
+            getLengthStartingIndex(size+1);
         }
         return indeces.get(size);
     }
@@ -63,5 +70,13 @@ public class Dictionary {
     /** @returns the length of the dictionary! */
     public int dictionaryLength(){
         return words.size();
+    }
+    public boolean possibleAnagram(HashMap<Character, Integer> input, int index){
+        for(char c : input.keySet()){
+            if(input.get(c)>getChars(index).get(c)){
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -67,4 +67,8 @@ public class AnaObj {
     public String getWord(){
         return word;
     }
+
+    public HashMap<Character, Integer> getMap(){
+        return letters;
+    }
 }
