@@ -41,7 +41,7 @@ public class Dictionary {
     }
     /** @returns a HashMap of the chars of the specified word */
     public HashMap<Character, Integer> getChars(int i){
-        HashMap<Character, Integer> output = template;
+        HashMap<Character, Integer> output = new HashMap<>(template);
         char[] temp = words.get(i).toCharArray();
         for(char c : temp){
             int j = output.get(c);

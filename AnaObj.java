@@ -6,7 +6,7 @@ import java.util.HashMap;
  */
 public class AnaObj {
     // map of all letters in line. This hashmap will take up 2080 bytes of memory
-    private static HashMap<Character, Integer> letters = new HashMap<>();
+    private HashMap<Character, Integer> letters = new HashMap<>();
     // keeping track of the characters left
     private int amtChars = 0;
     private String word;
@@ -70,5 +70,12 @@ public class AnaObj {
 
     public HashMap<Character, Integer> getMap(){
         return letters;
+    }
+    public HashMap<Character, Integer> getTemplateMap(){
+        HashMap<Character, Integer> output = new HashMap<>();
+        for (char c = 'a'; c <= 'z'; c++) {
+            output.put(c, 0);
+        }
+        return output;
     }
 }

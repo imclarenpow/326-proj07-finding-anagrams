@@ -4,6 +4,7 @@
 - [Implementation](#implementation)
     - [Anagram.java](#anagramjava)
         - [main()](#main)
+        - [optimal()](#optimal)
         - [inputHandler()](#inputhandler)
         - [lineHander()](#linehandler)
         - [debugSupportClasses()](#debugsupportclasses)
@@ -55,7 +56,37 @@
 >>
 >> creates the object dictionary from the dictionary ArrayList
 >>
->> clears both the rawWords, dictionary, and words ArrayLists to save memory.
+>> clears both the rawWords, dictionary, and words ArrayLists to save memory. (by setting them to null)
+>>
+>> iterates through the 'ana' objects, printing out the word first,<br>
+>> then calls 'optimal()' to progess the ana object.<br>
+>> in a nested for loop it returns the anagrams that 'optimal()' found.
+
+#### optimal()
+> takes in the instance of Dictionary being used as well as an instance of AnaObj.<br>
+> Initialises the workingMap which is a hashmap from a to z where all the values have been set to 0.<br>
+> initialises two new arraylists, output and tried<br>
+> gets the 'startingIndeces' from the dictionary object 'd' using the amount of characters available in the char.<br>
+> initialises totalChars, set to 0.<br>
+> starts a for loop that iterates from 'startingIndeces' to the length of the dictionary<br>
+>> if loop checks if the word has already been used (this is only in the case that the word has been checked before and wasn't possible). If so, simply continues to the next word.<br>
+>> new HashMap called 'prospectiveWord' which is the char values of the current word from the dictionary<br>
+>> nested loop iterating from a-z<br> 
+>>> if statement that checks that the current map's value of that char plus the prospectiveWord aren't greater than that of the inputted word.<br>
+>>>> if they are, there is another if statement that checks if the prospective word amount of chars itself is larger than the input's of that char<br>
+>>>>> if so, adds that word to the 'tried' ArrayList so that it is skipped over in the future, saves runtime.<br>
+>>>> breaks the loop.<br>
+>>> checks if 'c' is equal to "z"<br>
+>>>> if so, add the word to the output.<br>
+>>>> another small for loop that simply iterates through the hashmap and adds the chars to the working map.<br>
+>> sets 'totalChars' to the sum of all the key values of 'workingMap'<br>
+>> another if statement checking if 'totalChars' is larger than 'ana.charsLeft()'.<br>
+>>> if so, clear the output<br>
+>>> set i to the value of the startingIndeces (ie repeat loop)<br>
+>>> reset the workingMap by using 'ana.getTemplateMap();'
+> return the output
+
+
 #### inputHandler()
 > takes in ArrayList
 >
@@ -215,6 +246,7 @@ For instance if the input is:<br>
 > el<br>
 > leap<br>
 > pel<br>
+
 Then the output should be:<br>
 > apple: app el<br>
 > appleapple: leap app pel<br>

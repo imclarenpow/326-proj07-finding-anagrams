@@ -1,9 +1,16 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
-
+/**
+ * Anagram Class
+ * This class is the main class for the Anagram program
+ * It takes in stdin and processes it to find the best possible anagram
+ * The AnaObj class to store the word and the Dictionary class to store the dictionary
+ * optimal() finds the best possible anagram
+ * inputHandler() processes the input
+ * lineHandler() processes the lines
+ */
 public class Anagram{
-    
     public static void main(String[] args){
         // an ArrayList that holds the contents of the input
         ArrayList<String> rawWords = new ArrayList<String>();
@@ -41,46 +48,65 @@ public class Anagram{
         for(int i=0; i<ana.length; i++){
             ana[i] = new AnaObj(words.get(i));
         }
-        words.clear(); // clear words ArrayList to save memory
+        words = null; // clear words ArrayList to save memory
         Dictionary d = new Dictionary(dictionary); // new dictionary class based on dictionary words
-        dictionary.clear(); // clear dictionary ArrayList to save memory
-        
-        debugSupportClasses(d, ana);
+        dictionary = null; // clear dictionary ArrayList to save memory
 
-    //    for(int i = 0; i<ana.length; i++){
-    //        greedy(d, ana[i]);
-    //        System.out.println();
-    //    }
         for(int i=0; i<ana.length; i++){
-            optimal(d, ana[i]);
-            System.out.println();
+            System.out.print(ana[i].getWord() + ": ");
+            ArrayList<String> anagram = optimal(d, ana[i]);
+            for(String s : anagram){
+                System.out.print(s + " ");
+            }
+            System.out.println("");
         }   
     }
+    /** makes (or should) the best possible anagram
+     * @param Dictionary d -> the dictionary object instance that is being used throughout the program
+     * @param AnaObj ana -> the AnaObj instance that currently being worked on
+     * @return returns an ArrayList of strings that are the combination of the best words to be used as an anagrams
+     */
     public static ArrayList<String> optimal(Dictionary d, AnaObj ana){
+        // initialise working map
+        HashMap<Character, Integer> workingMap = ana.getTemplateMap();
         ArrayList<String> output = new ArrayList<>();
-        HashMap<Character, Integer> goal = ana.getMap();
-        HashMap<Character, Integer> working = d.getChars(d.getLengthStartingIndex(ana.charsLeft()));
-        if(working.equals(goal)){
-            output.add(d.getWord(0));
-            return output;
-        }
-        // TODO: figure out how to make a method that can find the optimal anagram 
-        // by checking that all or most of the letters are used up
-        for(int i = 0; i<d.dictionaryLength(); i++){
-            if (!working.equals(goal)) {
-                boolean isSmaller = true;
-                for (char key : working.keySet()) {
-                    if (working.get(key) > goal.get(key)) {
-                        isSmaller = false;
-                        working = d.getChars(i);
-                        break;
+        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
+        ArrayList<String> tried = new ArrayList<>();
+        int totalChars = 0;
+        
+        // iterate through from the first possible index based on length
+        for(int i = startingIndeces; i < d.dictionaryLength(); i++){
+            // if tried and it doesn't work we won't try again
+            if(tried.contains(d.getWord(i))){
+                continue;
+            }
+            HashMap<Character, Integer> prospectiveWord = d.getChars(i);
+            // iterate through all the chars to make sure that this word is possible
+            for(char c : workingMap.keySet()){
+                if(workingMap.get(c) + prospectiveWord.get(c) > ana.check(c)){
+                    if(prospectiveWord.get(c) > ana.check(c)){
+                        tried.add(d.getWord(i));
+                    }
+                    break;
+                }
+                // if got to the end without breaking
+                if(c == 'z'){
+                    // add word to the list of words that work
+                    output.add(d.getWord(i));
+                    if(output.size() == 1){
+                        // commented out because it looks like we're allowed double ups of words
+                        // tried.add(d.getWord(i));
+                    }
+                    for(char c2 : prospectiveWord.keySet()){
+                        workingMap.put(c2, workingMap.get(c2) + prospectiveWord.get(c2));
                     }
                 }
-                if (isSmaller) {
-                    
-                }
-            } else {
-                working = d.getChars(i);
+            }
+            totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
+            if(ana.charsLeft() < totalChars){
+                output.clear();
+                i = startingIndeces;
+                workingMap = ana.getTemplateMap();
             }
         }
         return output;
@@ -101,55 +127,7 @@ public class Anagram{
         }
         return output.toString();
     }
-    public static void debugSupportClasses(Dictionary d, AnaObj[] ana){
-        System.out.println("Words:");
-        for(int i = 0; i<ana.length; i++){
-            System.out.println(ana[i].getWord());
-        }
-        System.out.println("----\nDictionary:");
-        for(int i = 0; i<d.dictionaryLength(); i++){
-            System.out.println(d.getWord(i));
-        }
-        System.out.println("----\nThe Indeces for Sizes!");
-        for(int i = 31; i>20; i--){
-            System.out.println("Length " + i + " at Index " + d.getLengthStartingIndex(i));
-        }
-        System.out.println("----");
-    }
-
     
-    // this method is greedy it only makes the longest word and doesn't care about letters being left
-    // Supposed to find anagrams based on the dictionary and the anagram object
-    public static void greedy(Dictionary d, AnaObj ana){
-        // allows method to see the map of Anagram object
-        HashMap<Character, Integer> temp = ana.getMap();
-        System.out.println("Anagram Method word: " + ana.getWord());
-        ArrayList<String> output = new ArrayList<>();
-        // get the starting index of the dictionary based on the length of the anagram (skips unneeded searching)
-        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
-        System.out.println("Starting Search from Index: " + startingIndeces);
-        // loop through the dictionary to find possible anagrams
-        for(int j = startingIndeces; j<d.dictionaryLength(); j++){
-            HashMap<Character, Integer> prospectiveWord = d.getChars(j);
-            // if this word is a prospective anagram,
-            if(d.getWord(j).length() > ana.charsLeft()){
-                continue;
-            }
-            else if(d.possibleAnagram(temp, j)){
-                System.out.println(d.getWord(j) + " - has been deemed possible");
-                for(char c : prospectiveWord.keySet()){
-                    ana.take(c, prospectiveWord.get(c));
-                }
-                output.add(d.getWord(j));
-                // sets j to look at the index of the next word of the same length
-                temp = ana.getMap();
-            }
-        }
-        for(String s : output){
-            System.out.print(s + " ");
-        }
-    }
-
     /** Class to handle input of lines
      * @param ArrayList<String> input -> contains the raw stdin
      * @return String[] output -> contains only lines with alpha chars and only the alpha chars in lines
