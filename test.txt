@@ -1,6 +1,7 @@
 this is a test statement &
 this is another test statement it will be in words
 this is yet one more test statement. ! 9 0
+appleappleapple
 
 # This is a test comment
 dichlorodiphenyltrichloroethane
@@ -24,6 +25,7 @@ disestablishmentarianism
 electrocardiographically
 formaldehydesulphoxylate
 # This is words that should be added
+apple
 Stain
 attest
 this

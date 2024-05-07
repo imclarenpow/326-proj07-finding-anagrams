@@ -78,6 +78,7 @@
 >>>> breaks the loop.<br>
 >>> checks if 'c' is equal to "z"<br>
 >>>> if so, add the word to the output.<br>
+>>>> also, 'i--' in case we are able to use the same word again<br>
 >>>> another small for loop that simply iterates through the hashmap and adds the chars to the working map.<br>
 >> sets 'totalChars' to the sum of all the key values of 'workingMap'<br>
 >> another if statement checking if 'totalChars' is larger than 'ana.charsLeft()'.<br>

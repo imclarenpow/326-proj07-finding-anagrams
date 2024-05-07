@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.HashSet;
 /**
  * Anagram Class
  * This class is the main class for the Anagram program
@@ -52,61 +53,69 @@ public class Anagram{
         Dictionary d = new Dictionary(dictionary); // new dictionary class based on dictionary words
         dictionary = null; // clear dictionary ArrayList to save memory
 
+        StringBuilder sb = new StringBuilder();
         for(int i=0; i<ana.length; i++){
-            System.out.print(ana[i].getWord() + ": ");
+            sb.append(ana[i].getWord()).append(": ");
             ArrayList<String> anagram = optimal(d, ana[i]);
             for(String s : anagram){
-                System.out.print(s + " ");
+                sb.append(s).append(" ");
             }
-            System.out.println("");
-        }   
+            sb.append("\n");
+        }
+        System.out.print(sb.toString());   
     }
     /** makes (or should) the best possible anagram
      * @param Dictionary d -> the dictionary object instance that is being used throughout the program
      * @param AnaObj ana -> the AnaObj instance that currently being worked on
      * @return returns an ArrayList of strings that are the combination of the best words to be used as an anagrams
      */
-    public static ArrayList<String> optimal(Dictionary d, AnaObj ana){
-        // initialise working map
+    public static ArrayList<String> optimal(Dictionary d, AnaObj ana) {
         HashMap<Character, Integer> workingMap = ana.getTemplateMap();
+        // Calculate total characters before entering the loop
+        int totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
+        // Store the starting index based on the length of the input AnaObj
+        int startingIndex = d.getLengthStartingIndex(ana.charsLeft());
         ArrayList<String> output = new ArrayList<>();
-        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
-        ArrayList<String> tried = new ArrayList<>();
-        int totalChars = 0;
-        
-        // iterate through from the first possible index based on length
-        for(int i = startingIndeces; i < d.dictionaryLength(); i++){
-            // if tried and it doesn't work we won't try again
-            if(tried.contains(d.getWord(i))){
+        HashSet<String> tried = new HashSet<>();
+        // Iterate through from the first possible index based on length (saves time)
+        for (int i = startingIndex; i < d.dictionaryLength(); i++) {
+            // If the word has been tried before and failed, skip it
+            if (tried.contains(d.getWord(i))) {
                 continue;
             }
             HashMap<Character, Integer> prospectiveWord = d.getChars(i);
-            // iterate through all the chars to make sure that this word is possible
-            for(char c : workingMap.keySet()){
-                if(workingMap.get(c) + prospectiveWord.get(c) > ana.check(c)){
-                    if(prospectiveWord.get(c) > ana.check(c)){
-                        tried.add(d.getWord(i));
-                    }
+            boolean wordFits = true;
+            // Iterate through all the characters to make sure the word is possible
+            for (char c : workingMap.keySet()) {
+                Integer workingMapValue = workingMap.get(c);
+                Integer prospectiveWordValue = prospectiveWord.get(c);
+                if (workingMapValue + prospectiveWordValue > ana.check(c)) {
+                    wordFits = false;
                     break;
                 }
-                // if got to the end without breaking
-                if(c == 'z'){
-                    // add word to the list of words that work
-                    output.add(d.getWord(i));
-                    if(output.size() == 1){
-                        // commented out because it looks like we're allowed double ups of words
-                        // tried.add(d.getWord(i));
-                    }
-                    for(char c2 : prospectiveWord.keySet()){
-                        workingMap.put(c2, workingMap.get(c2) + prospectiveWord.get(c2));
-                    }
-                }
             }
-            totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
-            if(ana.charsLeft() < totalChars){
+            if (wordFits) {
+                // Add the word to the output
+                output.add(d.getWord(i));
+                // Update working map based on the characters in the word
+                for (char c : prospectiveWord.keySet()) {
+                    Integer workingMapValue = workingMap.get(c);
+                    Integer prospectiveWordValue = prospectiveWord.get(c);
+                    workingMap.put(c, workingMapValue + prospectiveWordValue);
+                }
+                // Update total characters incrementally
+                totalChars += d.getWord(i).length();
+                i--;
+            }
+            // Check if the total characters exceed the remaining characters in AnaObj
+            if (ana.charsLeft() < totalChars) {
+                // Clear the output and reset the working map
                 output.clear();
-                i = startingIndeces;
                 workingMap = ana.getTemplateMap();
+                // Reset the index to search for words with smaller lengths
+                i = d.getLengthStartingIndex(ana.charsLeft());
+                // Reset the total characters to the initial value
+                totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
             }
         }
         return output;
