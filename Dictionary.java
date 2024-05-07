@@ -4,13 +4,11 @@ import java.util.*;
  */
 public class Dictionary {
 
-    private HashMap<Integer, Integer> indeces = new HashMap<>();
     private HashMap<Character, Integer> template = new HashMap<>();
     private ArrayList<String> words = new ArrayList<>();
     /** constructor to construct all the datafields we want! */
     public Dictionary(ArrayList<String> input){
         orderByLength(input);
-        setIndeces(words);
         initTempHash();
     }
     
@@ -28,30 +26,14 @@ public class Dictionary {
             template.put(c, 0);
         }
     }
-    /** creates a HashMap of the indeces as to easily tell Anagram where to start looking for matches */
-    public void setIndeces(ArrayList<String> input){
-        int temp = 0;
-        for(int i=0; i<input.size(); i++){
-            if(input.get(i).length()!=temp){
-                temp = input.get(i).length();
-                indeces.put(temp, i);
-            }
-        }
-    }
     /** method that returns the index of the first line of the given length */
     public int getLengthStartingIndex(int size){
-        // if the length is bigger than the biggest number just return 0 to start from the start.
-        Iterator<HashMap.Entry<Integer, Integer>> it = indeces.entrySet().iterator();
-        HashMap.Entry<Integer, Integer> first = it.next();
-        do{
-            first = it.next();
-        }while((first.getKey()==null));
-        if(indeces.get(size)<first.getKey()){
-            return 0;
-        }else if(indeces.get(size)==null){
-            getLengthStartingIndex(size+1);
+        for(int i = 0; i<words.size(); i++){
+            if(words.get(i).length()<=size){
+                return i;
+            }
         }
-        return indeces.get(size);
+        return 0;
     }
     /** @returns the word from the index specified */
     public String getWord(int i){

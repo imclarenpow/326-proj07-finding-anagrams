@@ -47,61 +47,45 @@ public class Anagram{
         
         debugSupportClasses(d, ana);
 
-        for(int i = 0; i<ana.length; i++){
-            anagramHandler(d, ana[i]);
+    //    for(int i = 0; i<ana.length; i++){
+    //        greedy(d, ana[i]);
+    //        System.out.println();
+    //    }
+        for(int i=0; i<ana.length; i++){
+            optimal(d, ana[i]);
             System.out.println();
-        }
-            
+        }   
     }
-    // TODO: this method doesn't work correctly, the rest of the code isn't too shabby though
-    // Supposed to find anagrams based on the dictionary and the anagram object
-    public static void anagramHandler(Dictionary d, AnaObj ana){
-        // allows method to see the map of Anagram object
-        HashMap<Character, Integer> temp = ana.getMap();
-        System.out.println("Anagram Method word: " + ana.getWord());
+    public static ArrayList<String> optimal(Dictionary d, AnaObj ana){
         ArrayList<String> output = new ArrayList<>();
-        // get the starting index of the dictionary based on the length of the anagram (skips unneeded searching)
-        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
-        System.out.println("Starting Search from Index: " + startingIndeces);
-        // loop through the dictionary to find possible anagrams
-        for(int j = startingIndeces; j<d.dictionaryLength(); j++){
-            HashMap<Character, Integer> prospectiveWord = d.getChars(j);
-            // if this word is a prospective anagram, 
-            if(d.possibleAnagram(temp, j)){
-                System.out.println(d.getWord(j) + " - has been deemed possible");
-                for(char c : prospectiveWord.keySet()){
-                    ana.take(c, prospectiveWord.get(c));
+        HashMap<Character, Integer> goal = ana.getMap();
+        HashMap<Character, Integer> working = d.getChars(d.getLengthStartingIndex(ana.charsLeft()));
+        if(working.equals(goal)){
+            output.add(d.getWord(0));
+            return output;
+        }
+        // TODO: figure out how to make a method that can find the optimal anagram 
+        // by checking that all or most of the letters are used up
+        for(int i = 0; i<d.dictionaryLength(); i++){
+            if (!working.equals(goal)) {
+                boolean isSmaller = true;
+                for (char key : working.keySet()) {
+                    if (working.get(key) > goal.get(key)) {
+                        isSmaller = false;
+                        working = d.getChars(i);
+                        break;
+                    }
                 }
-                output.add(d.getWord(j));
-                // sets j to look at the index of the next word of the same length
-                temp = ana.getMap();
-                j = d.getLengthStartingIndex(ana.charsLeft());
-            }
-            
-        }
-        for(String s : output){
-            System.out.print(s + " ");
-        }
-    }
-
-    /** Class to handle input of lines
-     * @param ArrayList<String> input -> contains the raw stdin
-     * @return String[] output -> contains only lines with alpha chars and only the alpha chars in lines
-     */
-    public static String[] inputHandler(ArrayList<String> input){
-
-        ArrayList<String> output = new ArrayList<>();
-        for(int i = 0; i<input.size(); i++){
-            // ignores lines that start with # (as this indicates a comment in test files)
-            if(input.get(i).startsWith("#")){
-            }else{
-                String temp = lineHandler(input.get(i));
-                output.add(temp);
+                if (isSmaller) {
+                    
+                }
+            } else {
+                working = d.getChars(i);
             }
         }
-
-        return output.toArray(new String[output.size()]);
+        return output;
     }
+    
     /** Aux Class for inputHandler()
      * @param String input -> contains raw string from line passed from inputHandler
      * @return String output -> returns a string with only lowercase versions of the letters in the lines
@@ -131,5 +115,57 @@ public class Anagram{
             System.out.println("Length " + i + " at Index " + d.getLengthStartingIndex(i));
         }
         System.out.println("----");
+    }
+
+    
+    // this method is greedy it only makes the longest word and doesn't care about letters being left
+    // Supposed to find anagrams based on the dictionary and the anagram object
+    public static void greedy(Dictionary d, AnaObj ana){
+        // allows method to see the map of Anagram object
+        HashMap<Character, Integer> temp = ana.getMap();
+        System.out.println("Anagram Method word: " + ana.getWord());
+        ArrayList<String> output = new ArrayList<>();
+        // get the starting index of the dictionary based on the length of the anagram (skips unneeded searching)
+        int startingIndeces = d.getLengthStartingIndex(ana.charsLeft());
+        System.out.println("Starting Search from Index: " + startingIndeces);
+        // loop through the dictionary to find possible anagrams
+        for(int j = startingIndeces; j<d.dictionaryLength(); j++){
+            HashMap<Character, Integer> prospectiveWord = d.getChars(j);
+            // if this word is a prospective anagram,
+            if(d.getWord(j).length() > ana.charsLeft()){
+                continue;
+            }
+            else if(d.possibleAnagram(temp, j)){
+                System.out.println(d.getWord(j) + " - has been deemed possible");
+                for(char c : prospectiveWord.keySet()){
+                    ana.take(c, prospectiveWord.get(c));
+                }
+                output.add(d.getWord(j));
+                // sets j to look at the index of the next word of the same length
+                temp = ana.getMap();
+            }
+        }
+        for(String s : output){
+            System.out.print(s + " ");
+        }
+    }
+
+    /** Class to handle input of lines
+     * @param ArrayList<String> input -> contains the raw stdin
+     * @return String[] output -> contains only lines with alpha chars and only the alpha chars in lines
+     */
+    public static String[] inputHandler(ArrayList<String> input){
+
+        ArrayList<String> output = new ArrayList<>();
+        for(int i = 0; i<input.size(); i++){
+            // ignores lines that start with # (as this indicates a comment in test files)
+            if(input.get(i).startsWith("#")){
+            }else{
+                String temp = lineHandler(input.get(i));
+                output.add(temp);
+            }
+        }
+
+        return output.toArray(new String[output.size()]);
     }
 }
