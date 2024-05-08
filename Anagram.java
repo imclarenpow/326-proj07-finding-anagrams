@@ -111,10 +111,11 @@ public class Anagram{
                 i--;
             }
             // Check if the total characters exceed the remaining characters in AnaObj
-            if (ana.charsLeft() < totalChars) {
+            if (ana.charsLeft() != totalChars && i == d.dictionaryLength() - 1) {
                 // Clear the output and reset the working map
                 output.clear();
                 workingMap = ana.getTemplateMap();
+                ana.reset();
                 // Reset the index to search for words with smaller lengths
                 i = d.getLengthStartingIndex(ana.charsLeft());
                 // Reset the total characters to the initial value

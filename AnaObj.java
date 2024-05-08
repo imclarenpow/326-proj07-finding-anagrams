@@ -29,6 +29,14 @@ public class AnaObj {
     /** adds all chars present in the line to the map.
      * @param input -> string thats been given to the constructor
     */
+    public void reset(){
+        char[] inChar = word.toCharArray();
+        for(char c : inChar){
+            int temp = letters.get(c);
+            letters.put(c, temp+1);
+            amtChars++;
+        }
+    }
     public void storeChars(String input){
         char[] inChar = input.toCharArray();
         for(char c : inChar){
