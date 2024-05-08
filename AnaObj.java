@@ -30,6 +30,7 @@ public class AnaObj {
      * @param input -> string thats been given to the constructor
     */
     public void reset(){
+        initMap();
         char[] inChar = word.toCharArray();
         for(char c : inChar){
             int temp = letters.get(c);
