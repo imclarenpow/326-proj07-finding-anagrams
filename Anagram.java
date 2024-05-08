@@ -90,6 +90,7 @@ public class Anagram{
                 Integer workingMapValue = workingMap.get(c);
                 Integer prospectiveWordValue = prospectiveWord.get(c);
                 if (workingMapValue + prospectiveWordValue > ana.check(c)) {
+                    tried.add(d.getWord(i));
                     wordFits = false;
                     break;
                 }
@@ -97,6 +98,8 @@ public class Anagram{
             if (wordFits) {
                 // Add the word to the output
                 output.add(d.getWord(i));
+                // because its been used don't use again
+                tried.add(d.getWord(i));
                 // Update working map based on the characters in the word
                 for (char c : prospectiveWord.keySet()) {
                     Integer workingMapValue = workingMap.get(c);
