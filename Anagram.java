@@ -79,8 +79,10 @@ public class Anagram{
         ArrayList<String> output = new ArrayList<>();
         HashSet<String> tried = new HashSet<>();
         HashSet<String> firstWord = new HashSet<>();
+        int pass = 0;
         // Iterate through from the first possible index based on length (saves time)
         for (int i = d.getLengthStartingIndex(starter); i < d.dictionaryLength(); i++) {
+            if (pass==d.dictionaryLength()){ output.clear(); break; }
             // if word has been used as first b4 or tried contains then continue
             if (scroller == 0 && firstWord.contains(d.getWord(i))) { continue; }
             if (tried.contains(d.getWord(i))) { continue; }
@@ -110,6 +112,7 @@ public class Anagram{
             }
             // Check if the total characters exceed the remaining characters in AnaObj
             if (ana.getWord().length() != totalChars && i == d.dictionaryLength() - 1) {
+                System.out.println("resetting, current words were: " + output.toString());
                 if(output.size() == 0){
                     break;
                 }
@@ -121,6 +124,7 @@ public class Anagram{
                 scroller = 0; // add next first word to starting word
                 i = d.getLengthStartingIndex(starter);
                 totalChars = 0; // Reset the total characters to the initial value
+                pass++;
                 continue;
             }
             scroller++;
