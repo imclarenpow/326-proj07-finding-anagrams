@@ -78,14 +78,21 @@ public class Anagram{
         int starter = ana.charsLeft();
         ArrayList<String> output = new ArrayList<>();
         HashSet<String> tried = new HashSet<>();
-        HashSet<String> firstWord = new HashSet<>();
+        HashMap<Integer, HashSet<String>> tryIdx = new HashMap<>();
         int pass = 0;
         // Iterate through from the first possible index based on length (saves time)
         for (int i = d.getLengthStartingIndex(starter); i < d.dictionaryLength(); i++) {
+            if (tryIdx.get(scroller) == null){ tryIdx.put(scroller, new HashSet<>()); }
             if (pass==d.dictionaryLength()){ output.clear(); break; }
             // if word has been used as first b4 or tried contains then continue
-            if (scroller == 0 && firstWord.contains(d.getWord(i))) { continue; }
-            if (tried.contains(d.getWord(i))) { continue; }
+            if (tryIdx.get(scroller).contains(d.getWord(i))){ continue; }
+            else{ tryIdx.get(scroller).add(d.getWord(i));
+                if( tryIdx.get(scroller+1) != null){
+                    tryIdx.get(scroller+1).clear();
+                }else{
+                    tryIdx.put(scroller+1, new HashSet<>());
+                }
+            }
             HashMap<Character, Integer> prospectiveWord = d.getChars(i);
             boolean wordFits = true;
             // Iterate through all the characters to make sure the word is possible
@@ -93,15 +100,13 @@ public class Anagram{
                 Integer workingMapValue = workingMap.get(c);
                 Integer prospectiveWordValue = prospectiveWord.get(c);
                 if (workingMapValue + prospectiveWordValue > ana.check(c)) {
-                    tried.add(d.getWord(i));
                     wordFits = false;
                     break;
                 }
             }
             if (wordFits) {
-                if (scroller == 0){ firstWord.add(d.getWord(i)); } // if scroller is 0 then this is a first word
-                output.add(d.getWord(i)); // add to output
-                tried.add(d.getWord(i)); // because its been used don't use again
+                
+                output.add(d.getWord(i)); // add to output // because its been used don't use again
                 // Update working map based on the characters in the word
                 for (char c : prospectiveWord.keySet()) {
                     Integer workingMapValue = workingMap.get(c);

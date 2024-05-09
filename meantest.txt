@@ -3,7 +3,6 @@ another test statement
 WOW this is another test statement and it has capitals!
 
 # Dictionary starts here (370,000 long dictionary)
-a
 aa
 aaa
 aah
@@ -25420,7 +25419,6 @@ azurite
 azurites
 azurmalachite
 azurous
-b
 ba
 baa
 baaed
@@ -43833,7 +43831,6 @@ bwanas
 bx
 bxs
 bz
-c
 ca
 caaba
 caam
@@ -75940,7 +75937,6 @@ czechoslovakians
 czechoslovaks
 czechs
 czigany
-d
 da
 daalder
 dab
@@ -94673,7 +94669,6 @@ dzeron
 dziggetai
 dzo
 dzungar
-e
 ea
 eably
 eaceworm
@@ -108870,7 +108865,6 @@ ezba
 ezekiel
 ezod
 ezra
-f
 fa
 faade
 faailk
@@ -120763,7 +120757,6 @@ fw
 fwd
 fwelling
 fz
-g
 ga
 gaatch
 gab
@@ -131716,7 +131709,6 @@ gwerziou
 gwine
 gwiniad
 gwyniad
-h
 ha
 haab
 haaf
@@ -145459,8 +145451,6 @@ hwan
 hwy
 hwyl
 hwt
-i
-y
 ia
 ya
 yaba
@@ -159801,7 +159791,6 @@ izzard
 izzards
 izzat
 izzy
-j
 ja
 jaalin
 jaap
@@ -162641,7 +162630,6 @@ juxtaterrestrial
 juxtatropical
 juza
 jwahar
-k
 ka
 kaaba
 kaama
@@ -166593,7 +166581,6 @@ kwazoku
 kwela
 kwhr
 kwintra
-l
 la
 laager
 laagered
@@ -176595,7 +176582,6 @@ lwop
 lwp
 lx
 lxx
-m
 ma
 maad
 maam
@@ -196400,7 +196386,6 @@ mwalimu
 mxd
 mzee
 mzungu
-n
 na
 naa
 naam
@@ -209859,7 +209844,6 @@ nuzzlers
 nuzzles
 nuzzling
 nv
-o
 oad
 oadal
 oaf
@@ -222540,7 +222524,6 @@ ozophene
 ozostomia
 ozotype
 ozs
-p
 pa
 paal
 paaneleinrg
@@ -257400,7 +257383,6 @@ pvt
 pwca
 pwr
 pwt
-q
 qabbala
 qabbalah
 qadarite
@@ -259193,7 +259175,6 @@ qurti
 qurush
 qurushes
 qv
-r
 ra
 raad
 raadzaal
@@ -275976,7 +275957,6 @@ rvulsant
 rwd
 rwy
 rwound
-s
 sa
 saa
 saad
@@ -314740,7 +314720,6 @@ szaibelyite
 szekler
 szlachta
 szopelka
-t
 ta
 taa
 taal
@@ -333559,7 +333538,6 @@ tzontle
 tzotzil
 tzuris
 tzutuhil
-u
 uayeb
 uakari
 ualis
@@ -356326,7 +356304,6 @@ uzaron
 uzbak
 uzbeg
 uzbek
-v
 va
 vaad
 vaadim
@@ -361655,7 +361632,6 @@ vulvovaginitis
 vum
 vv
 vvll
-w
 wa
 waac
 waag
@@ -368214,7 +368190,6 @@ wuzzy
 wuzzle
 wuzzled
 wuzzling
-x
 xalostockite
 xanthaline
 xanthamic
@@ -368721,7 +368696,6 @@ xxiii
 xxiv
 xxv
 xxx
-z
 za
 zabaean
 zabaglione
