@@ -1,5 +1,6 @@
 this is aN epic test statement to make sure that my code is running very smoothly, i sure hope it is because i spent a fair bit of time on it
-
+another test statement
+WOW this is another test statement and it has capitals!
 
 # Dictionary starts here (370,000 long dictionary)
 a

@@ -72,17 +72,18 @@ public class Anagram{
     public static ArrayList<String> optimal(Dictionary d, AnaObj ana) {
         HashMap<Character, Integer> workingMap = ana.getTemplateMap();
         // Calculate total characters before entering the loop
-        int totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
+        int totalChars = 0;
+        int scroller = 0;
         // Store the starting index based on the length of the input AnaObj
-        int startingIndex = d.getLengthStartingIndex(ana.charsLeft());
+        int starter = ana.charsLeft();
         ArrayList<String> output = new ArrayList<>();
         HashSet<String> tried = new HashSet<>();
+        HashSet<String> firstWord = new HashSet<>();
         // Iterate through from the first possible index based on length (saves time)
-        for (int i = startingIndex; i < d.dictionaryLength(); i++) {
-            // If the word has been tried before and failed, skip it
-            if (tried.contains(d.getWord(i))) {
-                continue;
-            }
+        for (int i = d.getLengthStartingIndex(starter); i < d.dictionaryLength(); i++) {
+            // if word has been used as first b4 or tried contains then continue
+            if (scroller == 0 && firstWord.contains(d.getWord(i))) { continue; }
+            if (tried.contains(d.getWord(i))) { continue; }
             HashMap<Character, Integer> prospectiveWord = d.getChars(i);
             boolean wordFits = true;
             // Iterate through all the characters to make sure the word is possible
@@ -96,31 +97,33 @@ public class Anagram{
                 }
             }
             if (wordFits) {
-                // Add the word to the output
-                output.add(d.getWord(i));
-                // because its been used don't use again
-                tried.add(d.getWord(i));
+                if (scroller == 0){ firstWord.add(d.getWord(i)); } // if scroller is 0 then this is a first word
+                output.add(d.getWord(i)); // add to output
+                tried.add(d.getWord(i)); // because its been used don't use again
                 // Update working map based on the characters in the word
                 for (char c : prospectiveWord.keySet()) {
                     Integer workingMapValue = workingMap.get(c);
                     Integer prospectiveWordValue = prospectiveWord.get(c);
                     workingMap.put(c, workingMapValue + prospectiveWordValue);
                 }
-                // Update total characters incrementally
-                totalChars += d.getWord(i).length();
-                i--;
+                totalChars += d.getWord(i).length(); // Update total characters incrementally
             }
             // Check if the total characters exceed the remaining characters in AnaObj
-            if (ana.charsLeft() != totalChars && i == d.dictionaryLength() - 1) {
-                // Clear the output and reset the working map
-                output.clear();
+            if (ana.getWord().length() != totalChars && i == d.dictionaryLength() - 1) {
+                if(output.size() == 0){
+                    break;
+                }
+                // if scroller is 0 then anagram isn't possible
+                output.clear(); // Clear the output and reset the working map
                 workingMap = ana.getTemplateMap();
                 ana.reset();
-                // Reset the index to search for words with smaller lengths
-                i = d.getLengthStartingIndex(ana.charsLeft());
-                // Reset the total characters to the initial value
-                totalChars = workingMap.values().stream().mapToInt(Integer::intValue).sum();
+                tried.clear();
+                scroller = 0; // add next first word to starting word
+                i = d.getLengthStartingIndex(starter);
+                totalChars = 0; // Reset the total characters to the initial value
+                continue;
             }
+            scroller++;
         }
         return output;
     }
