@@ -12,6 +12,7 @@ import java.util.HashSet;
  * lineHandler() processes the lines
  */
 public class Anagram{
+    private static int maxDepth;
     public static void main(String[] args){
         // an ArrayList that holds the contents of the input
         ArrayList<String> rawWords = new ArrayList<String>();
@@ -69,74 +70,51 @@ public class Anagram{
      * @param AnaObj ana -> the AnaObj instance that currently being worked on
      * @return returns an ArrayList of strings that are the combination of the best words to be used as an anagrams
      */
-    public static ArrayList<String> optimal(Dictionary d, AnaObj ana) {
-        HashMap<Character, Integer> workingMap = ana.getTemplateMap();
-        // Calculate total characters before entering the loop
-        int totalChars = 0;
-        int scroller = 0;
-        // Store the starting index based on the length of the input AnaObj
-        int starter = ana.charsLeft();
+    public static ArrayList<String> optimal(Dictionary d, AnaObj ana){
         ArrayList<String> output = new ArrayList<>();
-        HashSet<String> tried = new HashSet<>();
-        HashMap<Integer, HashSet<String>> tryIdx = new HashMap<>();
-        int pass = 0;
-        // Iterate through from the first possible index based on length (saves time)
-        for (int i = d.getLengthStartingIndex(starter); i < d.dictionaryLength(); i++) {
-            if (tryIdx.get(scroller) == null){ tryIdx.put(scroller, new HashSet<>()); }
-            if (pass==d.dictionaryLength()){ output.clear(); break; }
-            // if word has been used as first b4 or tried contains then continue
-            if (tryIdx.get(scroller).contains(d.getWord(i))){ continue; }
-            else{ tryIdx.get(scroller).add(d.getWord(i));
-                if( tryIdx.get(scroller+1) != null){
-                    tryIdx.get(scroller+1).clear();
-                }else{
-                    tryIdx.put(scroller+1, new HashSet<>());
-                }
-            }
-            HashMap<Character, Integer> prospectiveWord = d.getChars(i);
-            boolean wordFits = true;
-            // Iterate through all the characters to make sure the word is possible
-            for (char c : workingMap.keySet()) {
-                Integer workingMapValue = workingMap.get(c);
-                Integer prospectiveWordValue = prospectiveWord.get(c);
-                if (workingMapValue + prospectiveWordValue > ana.check(c)) {
-                    wordFits = false;
-                    break;
-                }
-            }
-            if (wordFits) {
-                
-                output.add(d.getWord(i)); // add to output // because its been used don't use again
-                // Update working map based on the characters in the word
-                for (char c : prospectiveWord.keySet()) {
-                    Integer workingMapValue = workingMap.get(c);
-                    Integer prospectiveWordValue = prospectiveWord.get(c);
-                    workingMap.put(c, workingMapValue + prospectiveWordValue);
-                }
-                totalChars += d.getWord(i).length(); // Update total characters incrementally
-            }
-            // Check if the total characters exceed the remaining characters in AnaObj
-            if (ana.getWord().length() != totalChars && i == d.dictionaryLength() - 1) {
-                System.out.println("resetting, current words were: " + output.toString());
-                if(output.size() == 0){
-                    break;
-                }
-                // if scroller is 0 then anagram isn't possible
-                output.clear(); // Clear the output and reset the working map
-                workingMap = ana.getTemplateMap();
-                ana.reset();
-                tried.clear();
-                scroller = 0; // add next first word to starting word
-                i = d.getLengthStartingIndex(starter);
-                totalChars = 0; // Reset the total characters to the initial value
-                pass++;
-                continue;
-            }
-            scroller++;
-        }
+        recursionOpt(ana, d, output);
         return output;
     }
-    
+    public static void recursionOpt(AnaObj ana, Dictionary d, ArrayList<String> anagram){
+        if(ana.charsLeft()==0){
+            return;
+        }
+        for(int i = d.getLengthStartingIndex(ana.charsLeft()); i<d.dictionaryLength(); i++){
+            if(possibleAnagram(ana, d.getChars(i))){
+                HashMap<Character, Integer> prospectiveWord = d.getChars(i);
+                takeAll(ana, prospectiveWord);
+                anagram.add(d.getWord(i));
+                recursionOpt(ana, d, anagram);
+                if(ana.charsLeft()==0){
+                    return;
+                }
+                anagram.remove(anagram.size()-1);
+                reverseAll(ana, prospectiveWord);
+            }
+        }
+    }
+    public static void takeAll(AnaObj ana, HashMap<Character, Integer> prospectiveWord){
+        for (char c : prospectiveWord.keySet()) {
+            Integer prospectiveWordValue = prospectiveWord.get(c);
+            ana.take(c, prospectiveWordValue);
+        }
+    }
+    public static void reverseAll(AnaObj ana, HashMap<Character, Integer> prospectiveWord){
+        for (char c : prospectiveWord.keySet()) {
+            Integer prospectiveWordValue = prospectiveWord.get(c);
+            ana.reverse(c, prospectiveWordValue);
+        }
+    }
+    public static boolean possibleAnagram(AnaObj ana, HashMap<Character, Integer> word){
+        for (char c : ana.getMap().keySet()) {
+            Integer prospectiveWordValue = word.get(c);
+            if (prospectiveWordValue > ana.check(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** Aux Class for inputHandler()
      * @param String input -> contains raw string from line passed from inputHandler
      * @return String output -> returns a string with only lowercase versions of the letters in the lines

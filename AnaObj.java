@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 /** Class that makes a line of text into an object
  * @author Isaac
  * size per object will be around 3000 bytes of memory:
@@ -7,6 +8,7 @@ import java.util.HashMap;
 public class AnaObj {
     // map of all letters in line. This hashmap will take up 2080 bytes of memory
     private HashMap<Character, Integer> letters = new HashMap<>();
+    private HashMap<Character, Integer> original = new HashMap<>();
     // keeping track of the characters left
     private int amtChars = 0;
     private String word;
@@ -45,6 +47,9 @@ public class AnaObj {
             letters.put(c, temp+1);
             amtChars++;
         }
+        for (Map.Entry<Character, Integer> entry : letters.entrySet()) {
+            original.put(entry.getKey(), Integer.valueOf(entry.getValue()));
+        }
     }
     /** method to check amount of a char
      */
@@ -66,6 +71,11 @@ public class AnaObj {
         int temp = letters.get(c);
         letters.put(c, temp-amt);
         amtChars = amtChars-amt;
+    }
+    public void reverse(char c, int amt){
+        int temp = letters.get(c);
+        letters.put(c, temp+amt);
+        amtChars = amtChars+amt;
     }
     /** method to return the total number of chars left
      */

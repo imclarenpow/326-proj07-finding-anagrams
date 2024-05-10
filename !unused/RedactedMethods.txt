@@ -106,6 +106,86 @@
         output.add("No anagrams possible given dictionary");
         return output;
     }
+
+# optimal implementation
+    public static ArrayList<String> optimal(Dictionary d, AnaObj ana) {
+        HashMap<Character, Integer> workingMap = ana.getTemplateMap();
+        // Calculate total characters before entering the loop
+        int totalChars = 0;
+        int scroller = 0;
+        // Store the starting index based on the length of the input AnaObj
+        int starter = ana.charsLeft();
+        ArrayList<String> output = new ArrayList<>();
+        HashSet<String> tried = new HashSet<>();
+        HashMap<Integer, HashSet<String>> tryIdx = new HashMap<>();
+        int pass = 0;
+        // Iterate through from the first possible index based on length (saves time)
+        for (int i = d.getLengthStartingIndex(starter); i < d.dictionaryLength(); i++) {
+            if (tryIdx.get(scroller) == null){ tryIdx.put(scroller, new HashSet<>()); }
+            //for
+            if (pass==(d.dictionaryLength()-d.getLengthStartingIndex(starter))){ output.clear(); break; } // needs something along the lines of  || tryIdx.get(scroller).contains(d.getWord(i))
+            // if word has been used as first b4 or tried contains then continue
+            if (tryIdx.get(scroller).contains(d.getWord(i))){ continue; }
+            else{ tryIdx.get(scroller).add(d.getWord(i));
+                if( tryIdx.get(scroller+1) != null){
+                    tryIdx.get(scroller+1).clear();
+                }else{
+                    tryIdx.put(scroller+1, new HashSet<>());
+                }
+            }
+            HashMap<Character, Integer> prospectiveWord = d.getChars(i);
+            // Iterate through all the characters to make sure the word is possible
+            
+            if (possibleAnagram(workingMap, prospectiveWord)) {
+                
+                output.add(d.getWord(i)); // add to output // because its been used don't use again
+                // Update working map based on the characters in the word
+                for (char c : prospectiveWord.keySet()) {
+                    Integer workingMapValue = workingMap.get(c);
+                    Integer prospectiveWordValue = prospectiveWord.get(c);
+                    workingMap.put(c, workingMapValue + prospectiveWordValue);
+                }
+                totalChars += d.getWord(i).length(); // Update total characters incrementally
+            }
+            // Check if the total characters exceed the remaining characters in AnaObj
+            if (ana.getWord().length() != totalChars && i == d.dictionaryLength() - 1) {
+                System.out.println("resetting, current words were: " + output.toString());
+                if(output.size() == 0){
+                    break;
+                }
+                // if scroller is 0 then anagram isn't possible
+                output.clear(); // Clear the output and reset the working map
+                workingMap = ana.getTemplateMap();
+                ana.reset();
+                tried.clear();
+                scroller = 0; // add next first word to starting word
+                i = d.getLengthStartingIndex(starter);
+                totalChars = 0; // Reset the total characters to the initial value
+                pass++;
+                continue;
+            }
+            scroller++;
+        }
+        return output;
+    }
+
+
+# starting a recursive method:
+public static ArrayList<String> optimal (Dictionary d, AnaObj anagram){
+        HashMap<Character, Integer> workingMap = anagram.getTemplateMap();
+        ArrayList<String> output = new ArrayList<>();
+        return optimalRecursion(workingMap, anagram, output);
+    }
+    public static ArrayList<String> optimalRecursion (HashMap<Character, Integer> workingMap, AnaObj anagram, ArrayList<String> output, Dictionary d){
+        if(anagram.charsLeft()==0){
+            return output;
+        }
+        for(int i = d.getLengthStartingIndex(anagram.charsLeft()); i<d.dictionaryLength(); i++){
+            if(d.possibleAnagram(anagram.getMap(), i)){
+                
+            }
+        }
+    }
 # AnaObj
 
     public void printMap(){
