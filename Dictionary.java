@@ -11,7 +11,18 @@ public class Dictionary {
         orderByLength(input);
         initTempHash();
     }
-    
+    public void removeImpossibleWords(HashMap<Character, Integer> input){
+        for(int i=0; i<words.size(); i++){
+            HashMap<Character, Integer> word = getChars(i);
+            for(char c = 'a'; c <= 'z'; c++){
+                if(input.get(c)<word.get(c)){
+                    words.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+    }
     public void orderByLength(ArrayList<String> input){
         // Sort lines by length
         Collections.sort(input, Comparator.comparingInt(String::length).reversed());

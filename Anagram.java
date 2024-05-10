@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
-import java.util.HashSet;
 /**
  * Anagram Class
  * This class is the main class for the Anagram program
@@ -46,18 +45,21 @@ public class Anagram{
             scroller++;
         }
         AnaObj[] ana = new AnaObj[words.size()];
+        Dictionary[] d = new Dictionary[words.size()];
         // initialise all anagram objects
         for(int i=0; i<ana.length; i++){
             ana[i] = new AnaObj(words.get(i));
+            d[i] = new Dictionary(dictionary);
+            d[i].removeImpossibleWords(ana[i].getMap());
         }
-        words = null; // clear words ArrayList to save memory
-        Dictionary d = new Dictionary(dictionary); // new dictionary class based on dictionary words
+        words = null; // clear words ArrayList to save memory // new dictionary class based on dictionary words
         dictionary = null; // clear dictionary ArrayList to save memory
 
         StringBuilder sb = new StringBuilder();
         for(int i=0; i<ana.length; i++){
+            //System.out.println("--------\nWord: " + ana[i].getWord());
             sb.append(ana[i].getWord()).append(": ");
-            ArrayList<String> anagram = optimal(d, ana[i]);
+            ArrayList<String> anagram = optimal(d[i], ana[i]);
             for(String s : anagram){
                 sb.append(s).append(" ");
             }
@@ -80,7 +82,12 @@ public class Anagram{
             return;
         }
         for(int i = d.getLengthStartingIndex(ana.charsLeft()); i<d.dictionaryLength(); i++){
+            if(anagram.contains(d.getWord(i))){
+                continue;
+            }
             if(possibleAnagram(ana, d.getChars(i))){
+                //System.out.println("Adding " + d.getWord(i));
+                //System.out.println(anagram.toString());
                 HashMap<Character, Integer> prospectiveWord = d.getChars(i);
                 takeAll(ana, prospectiveWord);
                 anagram.add(d.getWord(i));
@@ -88,6 +95,8 @@ public class Anagram{
                 if(ana.charsLeft()==0){
                     return;
                 }
+                //System.out.println("Removing " + anagram.get(anagram.size()-1));
+                //System.out.println(anagram.toString());
                 anagram.remove(anagram.size()-1);
                 reverseAll(ana, prospectiveWord);
             }
