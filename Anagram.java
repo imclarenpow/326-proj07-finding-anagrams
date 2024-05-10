@@ -123,6 +123,16 @@ public class Anagram{
         }
         return true;
     }
+    public static boolean isNotPossible(int i, AnaObj ana, ArrayList<String> anagram, Dictionary d){
+        int totalLeng = 0;
+        for(int j=i; j<d.dictionaryLength(); j++){
+            totalLeng += d.getWord(i).length();
+        }
+        if(totalLeng<ana.charsLeft()){
+            return true;
+        }
+        return false;
+    }
 
     /** Aux Class for inputHandler()
      * @param String input -> contains raw string from line passed from inputHandler

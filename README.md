@@ -63,6 +63,7 @@
 >> in a nested for loop it returns the anagrams that 'optimal()' found.
 
 #### optimal()
+> <b> Its still the same but now its recursive </b>
 > takes in the instance of Dictionary being used as well as an instance of AnaObj.<br>
 > Initialises the workingMap which is a hashmap from a to z where all the values have been set to 0.<br>
 > initialises two new arraylists, output and tried<br>
