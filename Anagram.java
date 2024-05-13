@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.HashSet;
 /**
  * Anagram Class
  * This class is the main class for the Anagram program
@@ -74,31 +75,29 @@ public class Anagram{
      */
     public static ArrayList<String> optimal(Dictionary d, AnaObj ana){
         ArrayList<String> output = new ArrayList<>();
-        recursionOpt(ana, d, output);
+        recursionOpt(ana, d, output, new HashMap<>());
         return output;
     }
-    public static void recursionOpt(AnaObj ana, Dictionary d, ArrayList<String> anagram){
+    public static void recursionOpt(AnaObj ana, Dictionary d, ArrayList<String> anagram, HashMap<Integer, Integer> failedWords){
         if(ana.charsLeft()==0){
             return;
         }
         for(int i = d.getLengthStartingIndex(ana.charsLeft()); i<d.dictionaryLength(); i++){
-            if(anagram.contains(d.getWord(i))){
+            if(anagram.contains(d.getWord(i)) || (failedWords.containsKey(i) && failedWords.get(i)==anagram.size()-1)){
                 continue;
             }
             if(possibleAnagram(ana, d.getChars(i))){
-                //System.out.println("Adding " + d.getWord(i));
-                //System.out.println(anagram.toString());
                 HashMap<Character, Integer> prospectiveWord = d.getChars(i);
                 takeAll(ana, prospectiveWord);
                 anagram.add(d.getWord(i));
-                recursionOpt(ana, d, anagram);
+                recursionOpt(ana, d, anagram, failedWords);
                 if(ana.charsLeft()==0){
                     return;
                 }
-                //System.out.println("Removing " + anagram.get(anagram.size()-1));
-                //System.out.println(anagram.toString());
                 anagram.remove(anagram.size()-1);
                 reverseAll(ana, prospectiveWord);
+            } else {
+                failedWords.put(i, anagram.size());
             }
         }
     }
@@ -115,7 +114,7 @@ public class Anagram{
         }
     }
     public static boolean possibleAnagram(AnaObj ana, HashMap<Character, Integer> word){
-        for (char c : ana.getMap().keySet()) {
+        for (char c = 'a'; c <= 'z'; c++) {
             Integer prospectiveWordValue = word.get(c);
             if (prospectiveWordValue > ana.check(c)) {
                 return false;

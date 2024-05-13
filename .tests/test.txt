@@ -1,6 +1,6 @@
-this is a test statement &
-this is another test statement it will be in words
-this is yet one more test statement. ! 9 0
+this is a test statement
+this is another test statement
+this is yet one more test statement
 appleappleapple
 
 # This is a test comment
