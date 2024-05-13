@@ -12,7 +12,6 @@ import java.util.HashSet;
  * lineHandler() processes the lines
  */
 public class Anagram{
-    private static int maxDepth;
     public static void main(String[] args){
         // an ArrayList that holds the contents of the input
         ArrayList<String> rawWords = new ArrayList<String>();
