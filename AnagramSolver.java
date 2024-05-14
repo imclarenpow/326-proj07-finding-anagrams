@@ -18,8 +18,13 @@ public class AnagramSolver {
             HashMap<Character, Integer> workingMap = getMap(word);
             ArrayList<String> prunedWords = new ArrayList<>();
             ArrayList<HashMap<Character, Integer>> pruned = pruneDictionary(workingMap, prunedWords);
-            resetUsedWords(prunedWords.size());
-            ArrayList<String> anagrams = findAnagrams(new HashMap<Character,Integer>(workingMap), pruned, new ArrayList<String>(), prunedWords);
+            if(pruned.isEmpty()){
+                System.out.println(word + ":");
+                continue;
+            }
+            int maxDepth = calcMaxDepth(workingMap, prunedWords);
+            resetUsedWords(maxDepth);
+            ArrayList<String> anagrams = findAnagrams(new HashMap<Character,Integer>(workingMap), pruned, new ArrayList<String>(), prunedWords, 0, maxDepth);
             System.out.print(word + ": ");
             for(String anagram : anagrams){
                 System.out.print(anagram + " ");
@@ -29,38 +34,48 @@ public class AnagramSolver {
         }
 
     }
-    
-    public static ArrayList<String> findAnagrams(HashMap<Character, Integer> workingMap, ArrayList<HashMap<Character, Integer>> pruned, ArrayList<String> output, ArrayList<String> prunedWords){
-        if(workingMap.isEmpty()){
-            return output;
+    public static int calcMaxDepth(HashMap<Character, Integer> workingMap, ArrayList<String> dictionary){
+        int sum = 0;
+        for(char c : workingMap.keySet()){
+            sum += workingMap.get(c);
         }
-        for(int i = 0; i < pruned.size(); i++){
-            long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-            System.out.println("Used Memory: " + usedMemory / (1024 * 1024) + "MB");
+        if(dictionary.isEmpty()){
+            return 0;
+        }
+        int max = sum/dictionary.get(dictionary.size()-1).length();
+        return max;
+    }
+    public static ArrayList<String> findAnagrams(HashMap<Character, Integer> workingMap, ArrayList<HashMap<Character, Integer>> pruned, ArrayList<String> output, ArrayList<String> prunedWords, int depth, int maxDepth){
+        if(workingMap.isEmpty() || depth > maxDepth){
+            return output;
+        } int j = 0;
+        if(output.size() != 0){
+            j = prunedWords.indexOf(output.get(output.size()-1));
+        }
+        for(int i = j; i < pruned.size(); i++){
             String currentWord = prunedWords.get(i);
+            //System.out.println(output.toString() + " " + pruned.get(i).toString() + " " + currentWord + " " + workingMap.toString());
             // Check if the current word has been used for this position
-            if (!usedWords.get(output.size()).contains(currentWord)) {
+            if (output.size() <= usedWords.size() && !usedWords.get(output.size()).contains(currentWord)) {
                 if(isPossible(workingMap, pruned.get(i))){
                     workingMap = remove(workingMap, pruned.get(i));
-                    output.add(currentWord);
-                    // Mark the current word as used for this position
                     usedWords.get(output.size()).add(currentWord);
-                    output = findAnagrams(workingMap, pruned, output, prunedWords);
+                    output.add(currentWord);
+                    output = findAnagrams(workingMap, pruned, output, prunedWords, depth+1, maxDepth);
                     if(workingMap.isEmpty()){
                         return output;
                     }
                     if(!output.isEmpty()){
+                        usedWords.get(output.size()-1).remove(currentWord);
+                        workingMap = reverse(workingMap, getMap(output.get(output.size()-1)));
                         output.remove(output.size()-1);
                         // Unmark the current word as used for this position during backtracking
-                        usedWords.get(output.size()+1).remove(currentWord);
-                        workingMap = reverse(workingMap, dictionary.get(i));
-                    }else{
-                        workingMap = reverse(workingMap, dictionary.get(i));
+                        
                     }
                 }
             }
         }
-        return new ArrayList<String>();
+        return output;
     }  
 
     public static HashMap<Character, Integer> getMap(String word){
