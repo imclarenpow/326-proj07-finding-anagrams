@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
-import java.util.HashSet;
 /**
  * Anagram Class
  * This class is the main class for the Anagram program
