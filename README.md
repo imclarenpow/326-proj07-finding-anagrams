@@ -2,39 +2,18 @@
 ## Table of Contents
 - [Ease of Use](#ease-of-use)
 - [Implementation](#implementation)
-    - [Anagram.java](#anagramjava)
-        - [main()](#main)
-        - [optimal()](#optimal)
-        - [inputHandler()](#inputhandler)
-        - [lineHander()](#linehandler)
-        - [debugSupportClasses()](#debugsupportclasses)
-    - [AnaObj.java](#anaobjjava)
-        - [Constructor](#constructor)
-        - [initMap()](#initmap)
-        - [storeChars()](#storechars)
-        - [check()](#check)
-        - [take()](#take)
-        - [charsLeft()](#charsleft)
-    - [Dictionary](#dictionary)
-        - [Constructor](#constructor-1)
-        - [orderByLength()](#orderbylength)
-        - [initTempHash()](#inittemphash)
-        - [setIndeces()](#setindeces)
-        - [getLengthStartingIndex()](#getlengthstartingindex)
-        - [getWord()](#getword)
-        - [getChars()](#getchars)
-        - [dictionaryLength()](#dictionarylength)
 - [Memory Use](#memory-use)
 - [Introduction](#introduction)
 - [Task](#task)
 - [Standards](#standards)
 - [Objectives](#objectives)
 
-## Ease of Use
-> instead of compiling all the classes its easier to just run ```./compile.sh``` in bash
+
 ## Implementation
-
-
+Code firstly takes input from stdIn() and then adds words to their respective arrays<br>
+Then makes a map for all dictionary words.<br>
+Before iterating, it prunes the dictionary for selected words that will actually be viable solutions so it doesn't take as long to run.<br>
+Then it runs a recursive method called findAnagrams that finds the anagrams by iterating through all the words in the list, in order to not skip back to previously tried words it keeps track by memoizing the words previously tried.
 
 ## Introduction
 Two strings are [anagrams](https://en.wikipedia.org/wiki/Anagram) of one another if, ignoring capitalisation, punctuation and
