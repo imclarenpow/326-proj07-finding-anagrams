@@ -2,26 +2,124 @@ import java.util.*;
 
 public class AnagramSolver {
     public static ArrayList<String> words = new ArrayList<>();
-    public static ArrayList<String> dictionary = new ArrayList<>();
+    public static ArrayList<String> dictRaw = new ArrayList<>();
+    public static ArrayList<HashMap<Character, Integer>> dictionary = new ArrayList<>();
+    
+    // Maintain a set of used words for each position in the output sequence
+    public static ArrayList<HashSet<String>> usedWords = new ArrayList<>();
+    
     public static void main(String[] args){
         stdIn();
-        for(String word : words){
-            System.out.println(getMap(word).toString());
+        for(String word : dictRaw){
+            dictionary.add(getMap(word));
         }
-        System.out.println();
-        for(String word : dictionary){
-            System.out.println(getMap(word).toString());
+        
+        for(String word: words){
+            HashMap<Character, Integer> workingMap = getMap(word);
+            ArrayList<String> prunedWords = new ArrayList<>();
+            ArrayList<HashMap<Character, Integer>> pruned = pruneDictionary(workingMap, prunedWords);
+            resetUsedWords(prunedWords.size());
+            ArrayList<String> anagrams = findAnagrams(new HashMap<Character,Integer>(workingMap), pruned, new ArrayList<String>(), prunedWords);
+            System.out.print(word + ": ");
+            for(String anagram : anagrams){
+                System.out.print(anagram + " ");
+            }
+            System.out.println();
+            
         }
+
     }
-    public static ArrayList<String> findAnagrams(){
-        return null;
-    }
+    
+    public static ArrayList<String> findAnagrams(HashMap<Character, Integer> workingMap, ArrayList<HashMap<Character, Integer>> pruned, ArrayList<String> output, ArrayList<String> prunedWords){
+        if(workingMap.isEmpty()){
+            return output;
+        }
+        for(int i = 0; i < pruned.size(); i++){
+            long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            System.out.println("Used Memory: " + usedMemory / (1024 * 1024) + "MB");
+            String currentWord = prunedWords.get(i);
+            // Check if the current word has been used for this position
+            if (!usedWords.get(output.size()).contains(currentWord)) {
+                if(isPossible(workingMap, pruned.get(i))){
+                    workingMap = remove(workingMap, pruned.get(i));
+                    output.add(currentWord);
+                    // Mark the current word as used for this position
+                    usedWords.get(output.size()).add(currentWord);
+                    output = findAnagrams(workingMap, pruned, output, prunedWords);
+                    if(workingMap.isEmpty()){
+                        return output;
+                    }
+                    if(!output.isEmpty()){
+                        output.remove(output.size()-1);
+                        // Unmark the current word as used for this position during backtracking
+                        usedWords.get(output.size()+1).remove(currentWord);
+                        workingMap = reverse(workingMap, dictionary.get(i));
+                    }else{
+                        workingMap = reverse(workingMap, dictionary.get(i));
+                    }
+                }
+            }
+        }
+        return new ArrayList<String>();
+    }  
+
     public static HashMap<Character, Integer> getMap(String word){
         HashMap<Character, Integer> output = new HashMap<>();
         for(char c: word.toCharArray()){
             if(!output.containsKey(c)){ output.put(c, 0); }
             int j = output.get(c);
             output.put(c, j+1);
+        }
+        return output;
+    }
+    public static void resetUsedWords(int until){
+        if(!usedWords.isEmpty()){
+            usedWords.clear();
+        }
+        // Initialize the set of used words for each position
+        for (int i = 0; i < until; i++) {
+            usedWords.add(new HashSet<>());
+        }
+    }
+    public static boolean isPossible(HashMap<Character, Integer> workingMap, HashMap<Character, Integer> dicWord){
+        for(char c : dicWord.keySet()){
+            if(!workingMap.containsKey(c)){
+                return false;
+            }else if(workingMap.get(c) < dicWord.get(c)){
+                return false;
+            }
+        }
+        return true;
+    }
+    // the two following methods remove and reverse the dictionary from the workingMap
+    public static HashMap<Character, Integer> remove(HashMap<Character, Integer> workingMap, HashMap<Character, Integer> dictMap){
+        for(char c : dictMap.keySet()){
+            int j = workingMap.get(c);
+            workingMap.put(c, j-dictMap.get(c));
+            if(workingMap.get(c) == 0){
+                workingMap.remove(c);
+            }
+        }
+        return workingMap;
+    }
+    public static HashMap<Character, Integer> reverse(HashMap<Character, Integer> workingMap, HashMap<Character, Integer> dictMap){
+        for(char c : dictMap.keySet()){
+            if(!workingMap.containsKey(c)){
+                workingMap.put(c, 0);
+            }
+            int j = workingMap.get(c);
+            workingMap.put(c, j+dictMap.get(c));
+        }
+        return workingMap;
+    }
+    // make a pruned version of the dictionary for the workingMap (makes iteration faster)
+    public static ArrayList<HashMap<Character, Integer>> pruneDictionary(HashMap<Character, Integer> workingMap, ArrayList<String> prunedWords){
+        ArrayList<HashMap<Character, Integer>> output = new ArrayList<>();
+        for(int i=0; i<dictionary.size(); i++){
+            if(isPossible(workingMap, dictionary.get(i))){
+                output.add(dictionary.get(i));
+                prunedWords.add(dictRaw.get(i));
+            }
         }
         return output;
     }
@@ -47,11 +145,11 @@ public class AnagramSolver {
                 }
                 words.add(line);
             }else{
-                dictionary.add(line);
+                dictRaw.add(line);
             }
             scroller++;
         }
-        Collections.sort(dictionary, new Comparator<String>() {
+        Collections.sort(dictRaw, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
                 if (s1.length() != s2.length()) {
