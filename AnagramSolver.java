@@ -22,9 +22,8 @@ public class AnagramSolver {
                 System.out.println(word + ":");
                 continue;
             }
-            int maxDepth = calcMaxDepth(workingMap, prunedWords);
-            resetUsedWords(maxDepth);
-            ArrayList<String> anagrams = findAnagrams(new HashMap<Character,Integer>(workingMap), pruned, new ArrayList<String>(), prunedWords, 0, maxDepth);
+            resetUsedWords(word.length());
+            ArrayList<String> anagrams = findAnagrams(new HashMap<Character,Integer>(workingMap), pruned, new ArrayList<String>(), prunedWords);
             System.out.print(word + ": ");
             for(String anagram : anagrams){
                 System.out.print(anagram + " ");
@@ -34,19 +33,9 @@ public class AnagramSolver {
         }
 
     }
-    public static int calcMaxDepth(HashMap<Character, Integer> workingMap, ArrayList<String> dictionary){
-        int sum = 0;
-        for(char c : workingMap.keySet()){
-            sum += workingMap.get(c);
-        }
-        if(dictionary.isEmpty()){
-            return 0;
-        }
-        int max = sum/dictionary.get(dictionary.size()-1).length();
-        return max;
-    }
-    public static ArrayList<String> findAnagrams(HashMap<Character, Integer> workingMap, ArrayList<HashMap<Character, Integer>> pruned, ArrayList<String> output, ArrayList<String> prunedWords, int depth, int maxDepth){
-        if(workingMap.isEmpty() || depth > maxDepth){
+    
+    public static ArrayList<String> findAnagrams(HashMap<Character, Integer> workingMap, ArrayList<HashMap<Character, Integer>> pruned, ArrayList<String> output, ArrayList<String> prunedWords){
+        if(workingMap.isEmpty()){
             return output;
         } int j = 0;
         if(output.size() != 0){
@@ -61,7 +50,7 @@ public class AnagramSolver {
                     workingMap = remove(workingMap, pruned.get(i));
                     usedWords.get(output.size()).add(currentWord);
                     output.add(currentWord);
-                    output = findAnagrams(workingMap, pruned, output, prunedWords, depth+1, maxDepth);
+                    output = findAnagrams(workingMap, pruned, output, prunedWords);
                     if(workingMap.isEmpty()){
                         return output;
                     }
